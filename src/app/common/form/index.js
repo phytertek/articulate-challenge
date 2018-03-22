@@ -35,8 +35,7 @@ const style = theme => ({
   },
   errorIconColor: {
     color: theme.palette.error.main
-  },
-  progressBar: theme.palette.error.main
+  }
 });
 
 const render = field => {
@@ -71,17 +70,19 @@ class Form extends Component {
 
   addHandlers = fields => {
     const handlers = {
-      onChangeText: e => {
-        const { name, value } = e.target;
-        const fIndex = this.state.fields.findIndex(f => f.name === name);
-        const field = clone(this.state.fields[fIndex]);
+      onChangeText: event => {
+        const { name, value } = event.target;
+        const fieldIndex = this.state.fields.findIndex(
+          field => field.name === name
+        );
+        const field = clone(this.state.fields[fieldIndex]);
         const validatedField = this.props.validate
           ? validateField(merge(field, { value }))
           : merge(field, { value });
         const nextFields = insert(
-          fIndex,
+          fieldIndex,
           validatedField,
-          remove(fIndex, 1, this.state.fields)
+          remove(fieldIndex, 1, this.state.fields)
         );
         this.setState({
           fields: nextFields
