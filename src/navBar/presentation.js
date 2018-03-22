@@ -8,27 +8,24 @@ import MenuIcon from 'material-ui-icons/Menu';
 import AccountCircle from 'material-ui-icons/AccountCircle';
 
 import headerLogo from './resources/enmapi_red_d40000.svg';
-import NavMenuAuth from './navMenuAuth';
+import NavMenu from './navMenu';
 
 const style = theme => ({
   flex: { flex: 1 },
   logo: {
-    height: 40
+    height: 40,
+    paddingLeft: 15
   }
 });
 
-const NavBarPresentation = ({ classes, anchorEl, isAuth = true }) => {
+const NavBarPresentation = ({ classes, anchorEl, isAuth }) => {
   const open = !!anchorEl;
   return (
-    <AppBar position="static">
-      <Toolbar>
+    <AppBar position="sticky">
+      <Toolbar disableGutters>
         <img src={headerLogo} className={classes.logo} />
-        <Typography
-          variant="display1"
-          color="secondary"
-          className={classes.flex}
-        />
-        {isAuth && <NavMenuAuth />}
+        <div className={classes.flex} />
+        <NavMenu isAuth={isAuth} />
       </Toolbar>
     </AppBar>
   );

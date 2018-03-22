@@ -49,7 +49,7 @@ class AuthForm extends Component {
       validate: equals(this.state.authType, 'Register'),
       title: this.state.authType,
       submit: { label: this.state.authType, action: this.onSubmit },
-      showProgressBar: true, //this.props.authenticating,
+      showProgressBar: this.props.authenticating,
       secondaryActions: [
         {
           label: equals(this.state.authType, 'Login') ? 'Register' : 'Login',

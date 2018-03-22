@@ -6,7 +6,7 @@ import NavBarPresentation from './presentation';
 class NavBar extends Component {
   state = {};
   render() {
-    return <NavBarPresentation />;
+    return <NavBarPresentation {...this.props} />;
   }
 }
 
