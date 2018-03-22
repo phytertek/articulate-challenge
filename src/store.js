@@ -1,14 +1,15 @@
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 
 // Import reducers and async middlwares from components
-import { navStore as nav } from './navBar';
-import { authStore as auth } from './auth';
+import { nav } from './navBar';
+import { auth } from './auth';
+import { app } from './app';
 
 const store = combineReducers({
   // Add component reducers here
-  todo: (state = {}, action) => state,
   nav: nav.store,
-  auth: auth.store
+  auth: auth.store,
+  app: app.store
 });
 const createStoreWithMiddleware = applyMiddleware(nav.async, auth.async)(
   createStore
