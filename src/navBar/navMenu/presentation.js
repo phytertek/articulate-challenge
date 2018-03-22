@@ -1,10 +1,15 @@
 import React from 'react';
 import IconButton from 'material-ui/IconButton';
-import AccountCircle from 'material-ui-icons/AccountCircle';
+import AccountCircleIcon from 'material-ui-icons/AccountCircle';
+import MenuIcon from 'material-ui-icons/Menu';
 import Menu, { MenuItem } from 'material-ui/Menu';
+
+import AuthForm from '../../auth';
 
 const NavMenuAuthPresentation = ({
   open,
+  isAuth,
+  openModal,
   anchorEl,
   handleOpen,
   handleClose
@@ -16,7 +21,7 @@ const NavMenuAuthPresentation = ({
       onClick={handleOpen}
       color="secondary"
     >
-      <AccountCircle />
+      {isAuth ? <AccountCircleIcon /> : <MenuIcon />}
     </IconButton>
     <Menu
       id="menu-appbar"
@@ -32,8 +37,16 @@ const NavMenuAuthPresentation = ({
       open={open}
       onClose={handleClose}
     >
-      <MenuItem onClick={handleClose}>Profile</MenuItem>
-      <MenuItem onClick={handleClose}>My account</MenuItem>
+      <MenuItem
+        onClick={() =>
+          openModal('drawer', {
+            element: <AuthForm />
+          })
+        }
+      >
+        Login
+      </MenuItem>
+      {isAuth && <MenuItem onClick={handleClose}>My account</MenuItem>}
     </Menu>
   </div>
 );

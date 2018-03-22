@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
+import { openModal } from '../../app/store';
 import NavMenuAuthPresentation from './presentation';
 
 class NavMenuAuth extends Component {
@@ -11,6 +12,8 @@ class NavMenuAuth extends Component {
     return (
       <NavMenuAuthPresentation
         open={open}
+        isAuth={this.props.isAuth}
+        openModal={this.props.openModal}
         anchorEl={this.state.anchorEl}
         handleOpen={this.handleOpen}
         handleClose={this.handleClose}
@@ -19,4 +22,4 @@ class NavMenuAuth extends Component {
   }
 }
 
-export default NavMenuAuth;
+export default connect(null, { openModal })(NavMenuAuth);
