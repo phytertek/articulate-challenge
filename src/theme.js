@@ -15,9 +15,9 @@ const theme = {
       contrastText: '#ffffff'
     },
     error: {
-      light: '#f5f14c',
-      main: '#bfbf00',
-      dark: '#8b8f00',
+      light: '#a0ff56',
+      main: '#63ff00',
+      dark: '#00cb00',
       contrastText: '#000000'
     },
     type: 'dark' // Switch between dark and light mode
