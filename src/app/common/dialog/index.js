@@ -2,27 +2,31 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
-import Dialog, { withMobileDialog } from 'material-ui/Dialog';
+import Dialog from 'material-ui/Dialog';
 import { closeModal } from '../../store';
+import Slide from 'material-ui/transitions/Slide';
 
 const style = theme => ({
-  dialog: {
-    minWidth: 450
-  },
   title: {
-    textAlign: 'center',
     padding: theme.spacing.unit * 2
   }
 });
 
-const AppDialog = ({ classes, openDialogs, closeModal, fullScreen }) => {
+const Transition = props => (
+  <Slide {...props} direction="down" mountOnEnter unmountOnExit />
+);
+
+const AppDialog = ({ classes, openDialogs, closeModal }) => {
   const open = openDialogs.length > 0;
   return (
     <Dialog
-      onClose={() => closeModal('dialog', openDialogs[0].title)}
+      onClose={() =>
+        !!openDialogs[0] && closeModal('dialog', openDialogs[0].title)
+      }
       open={open}
-      fullScreen={fullScreen}
-      className={classes.dialog}
+      fullScreen={true}
+      transition={Transition}
+      transitionDuration={{ enter: 250, exit: 100 }}
     >
       {open &&
         !openDialogs[0].hideTitle && (
@@ -46,5 +50,5 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = { closeModal };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(style)(withMobileDialog({ breakpoint: 'xs' })(AppDialog))
+  withStyles(style)(AppDialog)
 );

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
-import { equals, clone, merge, append, omit, remove, insert } from 'ramda';
+import { equals, clone, merge, omit, remove, insert, map } from 'ramda';
 import { validateField } from '../validation';
 import {
-  addFieldsToCurrentForm,
-  updateFieldsInCurrentForm,
-  removeFieldsFromCurrentForm
+  addFieldsToForm,
+  updateFieldsInForm,
+  removeFieldsFromForm
 } from '../../store';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
@@ -26,12 +26,8 @@ const style = theme => ({
     paddingTop: theme.spacing.unit * 1,
     paddingBottom: theme.spacing.unit * 1
   },
-  buttonMain: {
-    padding: 20,
-    width: '100%'
-  },
-  secondaryButton: {
-    width: '100%'
+  button: {
+    marginTop: theme.spacing.unit * 1
   },
   errorIconColor: {
     color: theme.palette.error.main
@@ -57,17 +53,21 @@ class Form extends Component {
   }
 
   componentDidMount() {
-    if (this.props.publish)
-      this.props.addFieldsToCurrentForm(this.props.fields);
+    this.setState({ fields: this.addHandlers(this.props.fields) });
+    if (this.props.publish) this.props.addFieldsToForm(this.props.fields);
   }
-
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return (
-      !equals(this.state.fields, nextState.fields) ||
-      !equals(this.props, nextProps)
-    );
+  componentWillUnmount() {
+    if (this.props.publish) this.props.removeFieldsFromForm(this.props.fields);
   }
-
+  componentWillReceiveProps(nextProps) {
+    if (!equals(this.state.fields, nextProps.fields)) {
+      const nextFieldsWithHandlers = this.addHandlers(nextProps.fields);
+      this.setState({ fields: nextFieldsWithHandlers });
+    }
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    return !equals(this.state.fields, nextProps.fields);
+  }
   addHandlers = fields => {
     const handlers = {
       onChangeText: event => {
@@ -87,8 +87,7 @@ class Form extends Component {
         this.setState({
           fields: nextFields
         });
-        if (this.props.publish)
-          this.props.updateFieldsInCurrentForm(nextFields);
+        if (this.props.publish) this.props.updateFieldsInForm(nextFields);
       }
     };
     return fields.map(field => ({
@@ -97,8 +96,7 @@ class Form extends Component {
     }));
   };
 
-  cleanSubmitFields = fields =>
-    fields.map(field => omit(formFieldProps, field));
+  cleanSubmitFields = fields => map(omit(formFieldProps), fields);
 
   handleSubmit = e => {
     e.preventDefault();
@@ -111,14 +109,16 @@ class Form extends Component {
         })
       : clone(this.state.fields);
     if (fieldErrors) {
-      if (this.props.publish)
-        this.props.updateFieldsInCurrentForm(validatedFields);
+      if (this.props.publish) this.props.updateFieldsInForm(validatedFields);
       this.setState({ fields: validatedFields });
     } else {
-      if (this.props.publish)
-        this.props.removeFieldsFromCurrentForm(validatedFields);
+      if (this.props.publish) this.props.removeFieldsFromForm(validatedFields);
       this.props.submit.action(this.cleanSubmitFields(validatedFields));
     }
+  };
+
+  handleSecondaryAction = action => {
+    action(this.cleanSubmitFields(this.state.fields));
   };
 
   render() {
@@ -131,32 +131,31 @@ class Form extends Component {
     } = this.props;
     const { fields } = this.state;
     return (
-      <div>
-        <Paper className={classes.paper}>
-          {!!title && (
-            <Typography variant="display2" gutterBottom>
-              {title}
-            </Typography>
-          )}
-          <Grid>
-            {fields.map(field => (
-              <Grid item className={classes.textField} key={field.name}>
-                {render(field)}
-              </Grid>
-            ))}
-          </Grid>
-        </Paper>
+      <Paper className={classes.paper} elevation={0}>
+        {!!title && (
+          <Typography variant="headline" color="primary" gutterBottom>
+            {title}
+          </Typography>
+        )}
+        <Grid>
+          {fields.map(field => (
+            <Grid item className={classes.textField} key={field.name}>
+              {render(field)}
+            </Grid>
+          ))}
+        </Grid>
         {showProgressBar ? (
           <LinearProgress color="secondary" />
         ) : (
           <div>
             <Button
               onClick={this.handleSubmit}
-              className={classes.buttonMain}
+              className={classes.button}
               variant="raised"
-              color="primary"
+              color="secondary"
+              fullWidth
             >
-              <Typography variant="title" color="inherit">
+              <Typography variant="headline" color="inherit">
                 {submit.label || 'Submit'}
               </Typography>
             </Button>
@@ -166,24 +165,27 @@ class Form extends Component {
                 <Button
                   key={a.label}
                   variant="raised"
-                  color="secondary"
-                  className={classes.secondaryButton}
-                  onClick={() => a.action(this)}
+                  color="primary"
+                  className={classes.button}
+                  fullWidth
+                  onClick={() => {
+                    a.action(fields);
+                  }}
                 >
                   {a.label}
                 </Button>
               ))}
           </div>
         )}
-      </div>
+      </Paper>
     );
   }
 }
 
 const mapDispatchToProps = {
-  addFieldsToCurrentForm,
-  removeFieldsFromCurrentForm,
-  updateFieldsInCurrentForm
+  addFieldsToForm,
+  removeFieldsFromForm,
+  updateFieldsInForm
 };
 
 export default connect(null, mapDispatchToProps)(withStyles(style)(Form));

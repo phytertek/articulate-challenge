@@ -1,6 +1,5 @@
-import App from './container';
+import App from './app';
 import store from './store';
-import * as actions from './store';
 
-export const app = { store, actions };
+export const app = { store };
 export default App;

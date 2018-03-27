@@ -1,63 +1,22 @@
-import passwordStrengthTest from 'owasp-password-strength-test';
-import isEmail from 'validator/lib/isEmail';
 import clone from 'ramda/src/clone';
+import __ from 'ramda/src/__';
+import has from 'ramda/src/has';
 
-// const sampleField = {
-//  name: 'email',
-//  value: 'email@gmail.com',
-//  type: 'email',
-//  validate: [REQUIRED, EMAIL]
-// }
+const validators = {};
+const defined = has(__, validators);
+
 export const REQUIRED = 'REQUIRED';
-const isRequired = field => {
+validators.REQUIRED = field => {
   let error;
-  if (!field.value) error = `${field.name} is required`;
-  field.error = error || null;
+  if (!field.value) error = `${field.label || field.name} is required`;
+  field.error = error;
   return field;
 };
 
-export const EMAIL = 'EMAIL';
-const isValidEmail = field => {
-  let error;
-  if (!isEmail(field.value))
-    error = `${field.value} is not a valid email address`;
-  field.error = error || null;
-  return field;
-};
+const runValidators = (field, type) =>
+  defined(type) ? validators[type](field) : field;
 
-export const STRONG_PASSWORD = 'STRONG_PASSWORD';
-const isStrongPassword = field => {
-  let error;
-  passwordStrengthTest.config({
-    allowPassphrases: true,
-    maxLength: 56,
-    minLength: 8,
-    minPhraseLength: 24,
-    minOptionalTestsToPass: 4
-  });
-  const strengthTestResults = passwordStrengthTest.test(field.value);
-  if (!!strengthTestResults.optionalTestErrors.length)
-    error = strengthTestResults.optionalTestErrors[0];
-  if (!!strengthTestResults.requiredTestErrors.length)
-    error = strengthTestResults.requiredTestErrors[0];
-  field.error = error || null;
-  return field;
-};
-
-const runValidators = (validatedField, requirement) => {
-  switch (requirement) {
-    case STRONG_PASSWORD:
-      return isStrongPassword(validatedField);
-    case EMAIL:
-      return isValidEmail(validatedField);
-    case REQUIRED:
-      return isRequired(validatedField);
-    default:
-      return validatedField;
-  }
-};
-
-export const validateField = field => {
-  if (!field.validate || !field.validate.length) return field;
-  return field.validate.reduce(runValidators, clone(field));
-};
+export const validateField = field =>
+  field.validate && field.validate.length
+    ? field.validate.reduce(runValidators, clone(field))
+    : field;
