@@ -5,7 +5,6 @@
 
 # testing
 /coverage
-scratch.js
 
 # production
 /build

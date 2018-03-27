@@ -3,24 +3,39 @@ import { createMuiTheme } from 'material-ui/styles';
 const theme = {
   palette: {
     primary: {
-      light: '#2c2c2c',
-      main: '#000000',
-      dark: '#000000',
-      contrastText: '#ffffff'
+      light: '#606060',
+      main: '#363636',
+      dark: '#101010',
+      contrastText: '#fff'
     },
     secondary: {
-      light: '#ff5131',
-      main: '#d40000',
-      dark: '#9a0000',
-      contrastText: '#ffffff'
+      light: '#74edff',
+      main: '#2dbbf2',
+      dark: '#008bbf',
+      contrastText: '#fff'
     },
     error: {
-      light: '#a0ff56',
-      main: '#63ff00',
-      dark: '#00cb00',
-      contrastText: '#000000'
+      main: '#ff673f',
+      light: '#ff996c',
+      dark: '#c53413',
+      contrastText: '#fff'
     },
-    type: 'dark' // Switch between dark and light mode
+    background: {
+      default: '#fff'
+    }
+  },
+  typography: {
+    fontFamily: '"Lato", sans-serif',
+    fontWeightLight: 400,
+    fontWeightRegular: 500,
+    fontWeightMedium: 900,
+    body2: {
+      fontFamily: '"Merriweather", serif'
+    },
+    body1: {
+      fontSize: 18,
+      fontFamily: '"Merriweather", serif'
+    }
   }
 };
 
